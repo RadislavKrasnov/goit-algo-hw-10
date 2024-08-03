@@ -1,37 +1,37 @@
 import numpy as np
 import scipy.integrate as spi
 
-# calculate x^2 function results
 def f(x):
     return x**2
 
+def is_inside_integral_area(a, b, x, y):
+    return y <= x ** 2
+
 def monte_carlo_integration():
-    # Limits of integral x^2
-    a = 0
-    b = 2
-    N = 1000 # number of random values for x
+    num_experiments = 100
+    avarage_integral = 0
 
-    x_values = np.zeros(N)
+    for _ in range(num_experiments):
+        a = 2
+        b = 4
 
-    # list of x values for evaluating the integral
-    for i in range(len(x_values)):
-        x_values[i] = np.random.uniform(a, b)
+        points = [(np.random.uniform(0, a), np.random.uniform(0, b)) for _ in range(15000)]
+        inside_points = [point for point in points if is_inside_integral_area(a, b, point[0], point[1])]
 
-    # sum of calculated integral values
-    function_sum = 0
+        N = len(points)
+        M = len(inside_points)
 
-    # calculate function sum
-    for i in x_values:
-        function_sum += f(i)
-
-    integral = (b - a) / float(N) * function_sum
-    print(f'Integral value is: {integral}')
+        integral = (M / N) * (a * b)
+        avarage_integral += integral
+    
+    avarage_integral /= num_experiments
+    print(f"Integral value with Monte Carlo algorithm: {avarage_integral}")
 
 def integration_check():
     a = 0
     b = 2
     result, error = spi.quad(f, a, b)
-    print("Integral: ", result)
+    print("Integral with SciPy quad: ", result)
 
 monte_carlo_integration()
 integration_check()
